@@ -1,0 +1,20 @@
+{
+  "name": "sockets",
+  "version": "1.0.0",
+  "description": "es un chat de cliente servidor",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./server.js",
+    "start": "node ./server.js"
+  },
+  "keywords": [
+    "chat",
+    "socket",
+    "node"
+  ],
+  "author": "Kevin Medrano",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

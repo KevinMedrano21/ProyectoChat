@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../styles/styles.css" type="css">
+</head>
+<body>
+    <div class="container">
+        <textarea id="chat-box" class="chat-box"></textarea>
+        <input type="text" id="message-input">
+        <button>ENVIAR</button>
+
+        <script>
+            const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const ws = new WebSocket('ws://localhost:4000'); // Reemplaza con tu URL del servidor
+
+        sendButton.addEventListener('click', () => {
+        const message = messageInput.value;
+        if (message) {
+            ws.send(message); // Enviar el mensaje al servidor a través de WebSocket
+            messageInput.value = ''; // Limpiar el campo de entrada
+        }
+        });
+
+        ws.addEventListener('message', (event) => {
+          // Mostrar el mensaje en el chat-box
+        chatBox.innerHTML += `<p>${event.data}</p>`;
+        });
+    </script>
+
+        </script>
+    </div>
+</body>
+</html>
