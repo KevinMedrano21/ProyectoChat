@@ -1,4 +1,5 @@
 const net = require('net');
+const router = express.Router();
 const express = require('express');
 const readline = require('readline-sync');
 const servidor ={
@@ -14,18 +15,14 @@ client.on('connect', ()=>{
 })
 
 client.on('data', (data)=>{
-    console.log('El servidor dice:'+ data)
-    //sendLine()
+    console.log('El servidor dice' +data)
+    sendLine()
 })
 
-router.post('/enviar', async(req, res)=>{
-    const datos = req.body;
-    console.log("Mensaje:", datos.mensaje);
-    client.write(datos.mensaje)
-    res.redirect('/');
+client.on('error', (err)=>{
+    console.log(err.message)
 })
 
-module.exports = router;
 
 function sendLine(){
     var line = readline.question('\n ingresa un mensaje \n')
@@ -35,3 +32,4 @@ function sendLine(){
         client.write(line)
     }
 }
+
