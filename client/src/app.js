@@ -20,6 +20,10 @@ app.use((req, res, next)=>{
     next();
 });
 
+app.get('/', (req, res) => {
+    res.render('register');
+});
+
 //Rutas
 app.use('/',IndexRoutes);
 
@@ -27,9 +31,7 @@ app.use('/',IndexRoutes);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.get('/', (req, res) => {
-    res.render('login');
-});
+
 
 
 
