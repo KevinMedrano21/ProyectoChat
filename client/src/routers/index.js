@@ -4,7 +4,7 @@ const net = require('net');
 const servidor ={
     port:3000,
     host:'localhost'
-}
+};
 
 const client = net.createConnection(servidor);
     client.on('connect', ()=>{
@@ -22,6 +22,7 @@ const client = net.createConnection(servidor);
 router.get('/', async (req, res)=>{
     res.render('index.ejs', {mensaje});
 });
+
 
 router.post('/enviar', async(req, res)=>{
     const datos = req.body;

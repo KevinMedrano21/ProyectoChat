@@ -5,6 +5,7 @@ const bodyParse = require('body-parser');
 const path = require('path');
 
 
+
 const IndexRoutes = require('./routers/index.js');
 
 app.set('port', process.env.PORT || 4000); // asignacion de puerto
@@ -27,7 +28,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('login');
 });
 
 
