@@ -3,7 +3,9 @@ const router = express.Router();
 const net = require('net');
 const model = require('../model/Usuarios.js')();
 const Usuarios = require('../model/Usuarios');
+const auth = require('../helpers/auth.js'); // Importa el middleware
 const { Console, error } = require('console');
+//const mensaje = "";
 const servidor ={
     port:3000,
     host:'localhost'
@@ -53,29 +55,30 @@ router.post('/login', async (req, res) => {
 // })
 
 const client = net.createConnection(servidor);
-    client.on('connect', ()=>{
-        console.log('conexion satisfactiria')
-        
-    })
+client.on('connect', () => {
+  console.log('Conexión satisfactoria');
+})
 
-    let mensaje ='';
+let mensaje = "";
 
-    client.on('data', (data)=>{
-        mensaje = data.toString('utf-8');
-        console.log('mensajes del servidor:' + mensaje)
-    });
-
-router.get('/index', async (req, res)=>{
-    res.render('index.ejs', {mensaje});
+client.on('data', (data) => {
+  mensaje = data.toString('utf-8');
+  console.log('Mensaje del servidor: ' + mensaje);
 });
 
+router.get('/', auth.isAuthenticated, async (req, res) => {
+  res.render('index', { mensaje }); 
+});
 
-router.post('/enviar', async(req, res)=>{
-    const datos = req.body;
-        console.log("Mensaje de: " + datos.mensaje);
-        client.write(datos.mensaje);
-        res.locals.mensaje = datos.mensaje;
-    res.redirect('/');
+router.post('/enviar', async (req, res) => {
+  const datos = req.body;
+  if (datos && typeof datos.mensaje === 'string') {
+      console.log("Mensaje de: " + datos.mensaje);
+      client.write(datos.mensaje);
+  } else {
+      console.error("Error: 'mensaje' no es una cadena válida");
+  }
+  res.redirect('/');
 });
 
 module.exports = router;
