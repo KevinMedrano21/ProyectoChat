@@ -8,4 +8,16 @@ const Usuario = new Squema({
     psw: String
 });
 
+
+//esta metodo no funciona
+Usuario.methods.IsCorrectPsw = function(psw, callback){
+    compare(psw, this.psw, function(err, same){
+        if(err){
+            callback(err);
+        }else{
+            callback(err, same);
+        }
+    });
+}
+
 module.exports = mongoose.model('datos', Usuario);
