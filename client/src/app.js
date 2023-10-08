@@ -7,6 +7,7 @@ const path = require('path');
 
 
 const IndexRoutes = require('./routers/index.js');
+const { default: mongoose } = require('mongoose');
 
 app.set('port', process.env.PORT || 4000); // asignacion de puerto
 app.set('view engine', 'ejs');
@@ -31,15 +32,19 @@ app.get('/register', (req, res) => {
 //Rutas
 app.use('/',IndexRoutes);
 
-// establecer sistema de vistas
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 
 
 
+mongoose.connect("mongodb+srv://node:Node2002@cluster0.3gbtj9u.mongodb.net/ProyectoChat?retryWrites=true&w=majority")
+.then(db=>console.log('BD conectada'))
+.catch(err=>console.log('autenticacion fallida'));
 
 
 app.listen(app.get('port'), () => {
     console.log('El servidor esta funcionando en el puerto ', app.get('port'));
 });
+
+// establecer sistema de vistas
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
