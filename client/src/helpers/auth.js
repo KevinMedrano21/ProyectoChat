@@ -1,14 +1,20 @@
-// middleware/auth.js
+const jwt = require('jsonwebtoken');
+const router = require('../routers');
 
-module.exports = {
-    isAuthenticated: (req, res, next) => {
-      if (req.isAuthenticated()) {
-        // Si el usuario está autenticado, permite que continúe
-        return next();
-      } else {
-        // Si el usuario no está autenticado, redirige a la página de inicio de sesión o muestra un mensaje de error
-        res.redirect('/'); // Cambia '/login' a la ruta de inicio de sesión adecuada
-      }
-    }
-  };
-  
+function verificarToken(req, res, next){
+  const token = req.header('Authorization');
+
+  if(!token){
+    return res.status(401).json({mensaje: 'Acceso denegado. Token no proporcionado.'})
+  }
+
+  try{
+    const usuarioVerificado = jwt.verify(token, secretKey);
+    req.nombre = usuarioVerificado;
+    next();
+  }catch(error){
+    res.status(401).json({mensaje: 'token no valido'});
+  }
+}
+
+module.exports = router;
