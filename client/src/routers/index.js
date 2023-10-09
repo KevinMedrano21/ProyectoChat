@@ -6,19 +6,20 @@ const Usuarios = require('../model/Usuarios');
 const { Console, error } = require('console');
 const jwt = require('jsonwebtoken');
 const { decode } = require('punycode');
-const secretKey = 'secretKey';
-//const mensaje = "";
+const secretKey = 'tu-clave-valida';
 const servidor ={
     port:3000,
     host:'localhost'
 };
 
-router.get('/chat', verificarToken, async (req, res)=>{
-  res.render('chat.ejs');
+let mensaje = "";
+
+router.get('/index', verificarToken, async (req, res) => {
+  console.log('Ruta /chat se está ejecutando'); // Agrega registros de consola
+  res.render('index', { mensaje }); 
 });
 
-
-router.get('/login', (req, res) => {
+router.get('/', (req, res) => {
   res.render('login');
 });
 
@@ -27,7 +28,7 @@ router.get('/register', (req, res) => {
 });
 
 
-function verificarToken(req,res, next){
+function verificarToken(req, res, next){
   const token = req.query.token;
 
   if(!token){
@@ -44,7 +45,7 @@ function verificarToken(req,res, next){
     next();
   });
 
-}
+};
 
 
 
@@ -57,12 +58,12 @@ router.post('/add', async(req, res)=>{
 });
 
  //ruta para inicio de sesion
-router.get('/login', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
        // Busca un usuario con el correo electrónico proporcionado
     const users = await Usuarios.find();
        // Si las credenciales son válidas, puedes redirigir al usuario a la página de chat o realizar otras acciones
-    res.redirect('login.ejs', {
+    res.render('index', {
       users
     });
     } catch (error) {
@@ -71,7 +72,7 @@ router.get('/login', async (req, res) => {
     }
 });
 
-router.post('/escucha', async (req, res) => {
+router.post('/login', async (req, res) => {
   const { nombre, psw } = req.body;
 
   try {
@@ -87,7 +88,7 @@ router.post('/escucha', async (req, res) => {
     const token = jwt.sign(usuario, secretKey, {expiresIn: '1h' });
 
 
-    res.redirect('/chat?token=' + token);
+    res.redirect('/index?token=' + token);
   } catch (error) {
     console.error(error);
     res.status(500).send('Error de incio de sesion');
@@ -106,15 +107,9 @@ client.on('connect', () => {
   console.log('Conexión satisfactoria');
 })
 
-let mensaje = "";
-
 client.on('data', (data) => {
   mensaje = data.toString('utf-8');
   console.log('Mensaje del servidor: ' + mensaje);
-});
-
-router.get('/', async (req, res) => {
-  res.render('index', { mensaje }); 
 });
 
 router.post('/enviar', async (req, res) => {
@@ -125,7 +120,7 @@ router.post('/enviar', async (req, res) => {
   } else {
       console.error("Error: 'mensaje' no es una cadena válida");
   }
-  res.redirect('/');
+  res.redirect('/index');
 });
 
 module.exports = router;
