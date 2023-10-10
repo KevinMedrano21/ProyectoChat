@@ -3,7 +3,9 @@ const router = express.Router();
 const net = require('net');
 const model = require('../model/Usuarios.js')();
 const Usuarios = require('../model/Usuarios');
+const Message = require('../model/Message');
 const { Console, error } = require('console');
+const $ = require('jquery');
 const jwt = require('jsonwebtoken');
 const { decode } = require('punycode');
 const secretKey = 'tu-clave-valida';
@@ -18,8 +20,16 @@ router.get('/index', verificarToken, async (req, res) => {
   const nombreUsuario = req.usuario.nombre;
   console.log(`Usuario logeado: ${nombreUsuario}`);
   const token = req.query.token;
-  console.log('Ruta /chat se está ejecutando'); // Agrega registros de consola
-  res.render('index', { token, nombreUsuario, mensaje }); 
+
+  try {
+    const mensajes = await Message.find();
+
+    res.render('index', { token, nombreUsuario, mensaje, mensajes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al obtener el mensaje');
+  }
+  
 });
 
 router.get('/', (req, res) => {
@@ -49,7 +59,6 @@ function verificarToken(req, res, next){
   });
 
 };
-
 
 
 //ruta para registro
@@ -116,19 +125,26 @@ client.on('data', (data) => {
 });
 
 router.post('/enviar', async (req, res) => {
-  const datos = req.body;
-  const nombreUsuario = req.body.usuario;
+  const { usuario, mensaje } = req.body;
 
-  if (datos && typeof datos.mensaje === 'string') {
-    const mensajeCompleto = `${nombreUsuario}: ${datos.mensaje}\n`; // Agrega '\n' al final
-    console.log("Mensaje de: " + mensajeCompleto);
-    client.write(mensajeCompleto);
+  if (mensaje && typeof mensaje === 'string') {
+    try {
+      const newMessage = new Message({ usuario, mensaje });
+      await newMessage.save();
+      const mensajeCompleto = `${usuario}: ${mensaje}`; // Agrega '\n' al final
+      console.log('Mensaje de: ' + mensajeCompleto);
+      client.write(mensajeCompleto);
+      const token = req.query.token;
+      res.redirect(303, '/index?token=' + token);
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error al guardar el mensaje');
+    }
+    
   } else {
     console.error("Error: 'mensaje' no es una cadena válida");
   }
-
-  const token = req.query.token;
-  res.redirect(303, '/index?token=' + token);
 });
 
 module.exports = router;

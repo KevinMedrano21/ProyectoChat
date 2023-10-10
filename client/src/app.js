@@ -14,7 +14,6 @@ app.set('view engine', 'ejs');
 app.use(log('dev'));
 app.use(bodyParse.urlencoded({extended: false}));
 
-
 app.use('/',IndexRoutes);
 
 

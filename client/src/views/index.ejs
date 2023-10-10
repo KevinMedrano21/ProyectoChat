@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Agregar jQuery desde un CDN -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
@@ -13,7 +14,9 @@
             <br>
             <div class="form-floating">
                 <textarea disabled class="form-control" placeholder=""  id="floatingTextarea2" style="height: 400px">
-                    <%= mensaje %>  
+                    <% mensajes.forEach((mensaje) => { %>
+                        <%= mensaje.usuario %>: <%= mensaje.mensaje %>
+                       <% }); %> 
                 </textarea>
             </div>
         
