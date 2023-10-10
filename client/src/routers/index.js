@@ -15,8 +15,9 @@ const servidor ={
 let mensaje = "";
 
 router.get('/index', verificarToken, async (req, res) => {
+  const token = req.query.token;
   console.log('Ruta /chat se está ejecutando'); // Agrega registros de consola
-  res.render('index', { mensaje }); 
+  res.render('index', { token, mensaje }); 
 });
 
 router.get('/', (req, res) => {
@@ -120,7 +121,15 @@ router.post('/enviar', async (req, res) => {
   } else {
       console.error("Error: 'mensaje' no es una cadena válida");
   }
-  res.redirect('/index');
+
+  const token = req.query.token;
+
+  if(token){
+    res.redirect('/index?token=' + token)
+  }else{
+    res.redirect('/index');
+  }
+  
 });
 
 module.exports = router;
