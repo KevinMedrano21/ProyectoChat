@@ -117,13 +117,12 @@ client.on('data', (data) => {
 
 router.post('/enviar', async (req, res) => {
   const datos = req.body;
-  const nombreUsuario = req.body.usuario; // Obtén el nombre del usuario
+  const nombreUsuario = req.body.usuario;
 
   if (datos && typeof datos.mensaje === 'string') {
-    const mensajeCompleto = `${nombreUsuario}: ${datos.mensaje}`;
+    const mensajeCompleto = `${nombreUsuario}: ${datos.mensaje}\n`; // Agrega '\n' al final
     console.log("Mensaje de: " + mensajeCompleto);
-    client.write(mensajeCompleto); // Envía "mensajeCompleto" al servidor
-
+    client.write(mensajeCompleto);
   } else {
     console.error("Error: 'mensaje' no es una cadena válida");
   }
