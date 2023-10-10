@@ -12,17 +12,17 @@
         <form action="/enviar?token=<%= token %>" method="post">
             <br>
             <div class="form-floating">
-                <textarea disabled class="form-control" placeholder=""  id="floatingTextarea2" style="height: 400px"  > 
+                <textarea disabled class="form-control" placeholder=""  id="floatingTextarea2" style="height: 400px">
                     <%= mensaje %>  
                 </textarea>
             </div>
-
+        
             <div class="input-group mb-3">
-                <input type="hidden" id="usuario" name="usuario" value="Kevin">
+                <input type="hidden" id="usuario" name="usuario" value="<%= nombreUsuario %>">
                 <input type="text" id="mensaje" name="mensaje" class="form-control" placeholder="Mensaje" aria-label="Mensaje" aria-describedby="button-addon2">
                 <button class="btn btn-primary" >Enviar</button>
             </div>
-        </form>
+        </form>        
     </div>
 </body>
 </html>

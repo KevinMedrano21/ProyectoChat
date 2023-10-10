@@ -15,9 +15,11 @@ const servidor ={
 let mensaje = "";
 
 router.get('/index', verificarToken, async (req, res) => {
+  const nombreUsuario = req.usuario.nombre;
+  console.log(`Usuario logeado: ${nombreUsuario}`);
   const token = req.query.token;
   console.log('Ruta /chat se está ejecutando'); // Agrega registros de consola
-  res.render('index', { token, mensaje }); 
+  res.render('index', { token, nombreUsuario, mensaje }); 
 });
 
 router.get('/', (req, res) => {
@@ -85,7 +87,7 @@ router.post('/login', async (req, res) => {
       
     }
 
-    const usuario = { id:1, nombre: 'Ejemplo' };
+    const usuario = { id:1, nombre: `${nombre}` };
     const token = jwt.sign(usuario, secretKey, {expiresIn: '1h' });
 
 
@@ -115,21 +117,19 @@ client.on('data', (data) => {
 
 router.post('/enviar', async (req, res) => {
   const datos = req.body;
+  const nombreUsuario = req.body.usuario; // Obtén el nombre del usuario
+
   if (datos && typeof datos.mensaje === 'string') {
-      console.log("Mensaje de: " + datos.mensaje);
-      client.write(datos.mensaje);
+    const mensajeCompleto = `${nombreUsuario}: ${datos.mensaje}`;
+    console.log("Mensaje de: " + mensajeCompleto);
+    client.write(mensajeCompleto); // Envía "mensajeCompleto" al servidor
+
   } else {
-      console.error("Error: 'mensaje' no es una cadena válida");
+    console.error("Error: 'mensaje' no es una cadena válida");
   }
 
   const token = req.query.token;
-
-  if(token){
-    res.redirect('/index?token=' + token)
-  }else{
-    res.redirect('/index');
-  }
-  
+  res.redirect(303, '/index?token=' + token);
 });
 
 module.exports = router;
