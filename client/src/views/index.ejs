@@ -27,5 +27,29 @@
             </div>
         </form>        
     </div>
+    
+    <script>
+        const eventSource = new EventSource("/sse");
+        
+        const chatContainer = document.getElementById("floatingTextarea2");
+        eventSource.onopen = (event) => {
+            console.log("SSE connection established");
+        };
+        
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            
+            const messageP = `${data.usuario + ': ' + data.mensaje}\n`;
+        
+            chatContainer.innerHTML += messageP;
+        
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        };
+                document.addEventListener("DOMContentLoaded", function () {
+        
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                })
+    </script>
+
 </body>
 </html>

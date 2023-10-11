@@ -107,13 +107,6 @@ router.post('/login', async (req, res) => {
   }
 })
 
-// router.post('/login', async(req,res)=>{
-//     const {nombre, psw} = req.body;
-//     Usuarios.findOne({nombre, psw});
-//     console.log(req.body);
-//     res.redirect('/index')
-// })
-
 const client = net.createConnection(servidor);
 client.on('connect', () => {
   console.log('Conexión satisfactoria');
@@ -122,6 +115,24 @@ client.on('connect', () => {
 client.on('data', (data) => {
   mensaje = data.toString('utf-8');
   console.log('Mensaje del servidor: ' + mensaje);
+});
+
+
+
+// Manejo de conexiones de eventos servidor-sentido (SSE)
+const sseClients = [];
+
+router.get("/sse", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  sseClients.push(res);
+
+  req.on("close", () => {
+    const index = sseClients.indexOf(res);
+    if (index !== -1) {
+      sseClients.splice(index, 1);
+    }
+  });
 });
 
 router.post('/enviar', async (req, res) => {
@@ -135,6 +146,11 @@ router.post('/enviar', async (req, res) => {
       console.log('Mensaje de: ' + mensajeCompleto);
       client.write(mensajeCompleto);
       const token = req.query.token;
+
+      sseClients.forEach((client) => {
+        client.write(`data: ${JSON.stringify({ usuario: usuario, mensaje })}\n\n`);
+      });
+
       res.redirect(303, '/index?token=' + token);
 
     } catch (error) {
